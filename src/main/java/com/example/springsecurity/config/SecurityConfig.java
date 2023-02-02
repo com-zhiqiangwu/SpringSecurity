@@ -4,8 +4,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -38,9 +47,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //(这个是controller层控制的)，但是地址栏显示的，是这里设置的地址
                 .loginProcessingUrl("/login")
                 //登录成功后返回的页面。就是地址栏里虽然是上面设置的/login，但是实际登录成功后，访问的请求是这个
-                .successForwardUrl("/loginSuccess")
+//                .successForwardUrl("/loginSuccess")
+                //当我们登录成功进入页面，刷新时，会提示重新提交表单
+                // 解决重复提交表单问题(由跳转改为重定向)，并且可以站外转发（前后端分离项目使用）
+                .successHandler(new AuthenticationSuccessHandler() {
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                        response.sendRedirect("/loginSuccess");
+                    }
+                })
                 //登录失败页面
-                .failureForwardUrl("/loginFail")
+//                .failureForwardUrl("/loginFail")
+                .failureHandler(new AuthenticationFailureHandler() {
+                    @Override
+                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                        response.sendRedirect("/loginFail");
+                    }
+                })
                 //如果form表单账号密码的name不是username和password，就可以用下面两个属性来指定;如果是username和password就不用写下面两行
                 .usernameParameter("un")
                 .passwordParameter("pwd");
@@ -49,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
            http.authorizeRequests()
                    //只要请求showLogin页面，就全部放行
                    //antMatchers,表示指定一个页面，permitAll表示不需要授权，全部放行
-                   .antMatchers("/showLogin").permitAll()
+                   .antMatchers("/showLogin","/loginFail").permitAll()
                    //除了上面配置的，其他任何请求（anyRequest），都必须已经通过验证（authenticated）才能放行
                    .anyRequest().authenticated();
 

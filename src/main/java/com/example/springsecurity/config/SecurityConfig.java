@@ -1,5 +1,7 @@
 package com.example.springsecurity.config;
 
+import com.example.springsecurity.exception.MyAccessDeniedHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +20,9 @@ import java.io.IOException;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private MyAccessDeniedHandler myAccessDeniedHandler;
 
     /**
      * 配置密码解析bean实例
@@ -73,8 +78,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                    //只要请求showLogin页面，就全部放行
                    //antMatchers,表示指定一个页面，permitAll表示不需要授权，全部放行
                    .antMatchers("/showLogin","/loginFail").permitAll()
+                   //拒绝访问abc的一切请求
+                   .antMatchers("/abc").denyAll()
                    //除了上面配置的，其他任何请求（anyRequest），都必须已经通过验证（authenticated）才能放行
                    .anyRequest().authenticated();
+
+           //配置异常处理
+           http.exceptionHandling()
+                   //配置，拒绝访问处理程序为我们刚才写的组件
+                   .accessDeniedHandler(myAccessDeniedHandler);
 
            //让csrf禁用，否则会一直验证，进入死循环
            http.csrf().disable();

@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>spring-security登录页面</title>
 </head>
 <body>
     <form action="/login" method="post">
-        <input type="text" name="un" placeholder="用户名"></br>
+        <input type="text" name="un" placeholder="用户名"></br></br>
         <input type="password" name="pwd" placeholder="密码"></br>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="验证码" name="code">
+            <span style="margin-top: 20px">
+            <img  src="/code/image" th:src="@{/code/image}" onclick="this.src= '/code/image?'+Math.random()">
+            </span>
+            </div>
         <input type="submit"></br>
     </form>
 </body>

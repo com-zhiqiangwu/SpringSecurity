@@ -77,9 +77,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
            http.authorizeRequests()
                    //只要请求showLogin页面，就全部放行
                    //antMatchers,表示指定一个页面，permitAll表示不需要授权，全部放行
-                   .antMatchers("/showLogin","/loginFail").permitAll()
+                   .antMatchers("/showLogin","/loginFail","/code/image").permitAll()
+                   //给访问路径设置权限。如/loginSuccess设置为具有admin1权限才能访问
+                   .antMatchers("/loginSuccess").hasAuthority("admin1")
                    //拒绝访问abc的一切请求
-                   .antMatchers("/abc").denyAll()
+                   //.antMatchers("/abc").denyAll()
+                   //只有具有权限为admin的角色才能访问/abc
+                   .antMatchers("/abc").hasAuthority("admin")
                    //除了上面配置的，其他任何请求（anyRequest），都必须已经通过验证（authenticated）才能放行
                    .anyRequest().authenticated();
 

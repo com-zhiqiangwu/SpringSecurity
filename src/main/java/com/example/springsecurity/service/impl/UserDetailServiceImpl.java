@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,7 +52,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         //2.3 拼接权限 循环拼接
         //2.4因为权限字符拼接非常麻烦所以spring security提供了AuthorityUtils工具类，
         // 帮我们封装参数就是权限字符通过逗号分隔，比如”admin1,admin2“
-        List<GrantedAuthority> grantedAuthorityList = AuthorityUtils.commaSeparatedStringToAuthorityList("admin1,admin2");
+        List<GrantedAuthority> grantedAuthorityList = AuthorityUtils.commaSeparatedStringToAuthorityList("admin,admin1,admin2,ROLE_manager,ROLE_user");
         //3返回UserDetail
         UserDetails user = new User(username, testPassword, grantedAuthorityList);
         return user;

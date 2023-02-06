@@ -85,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
            http.authorizeRequests()
                    //只要请求showLogin页面，就全部放行
                    //antMatchers,表示指定一个页面，permitAll表示不需要授权，全部放行
+                   //放行静态资源，不然登录页面样式和js不显示
                    .antMatchers("/showLogin","/loginFail","/code/image", "/css/**","/js/**","/images/**","/layui/**").permitAll()
                    //给访问路径设置权限。如/loginSuccess设置为具有admin1权限才能访问
                    .antMatchers("/loginSuccess").hasAuthority("admin1")

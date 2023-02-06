@@ -29,7 +29,7 @@ public class ImageCodeValidaterFilter  extends OncePerRequestFilter {
         try {
             //如果访问的是/login并且为post请求
             if (StringUtils.equals("/login",request.getRequestURI())
-            && StringUtils.equals(request.getMethod(),"post")){
+            && StringUtils.equals(request.getMethod(),"POST")){
                     //获取session的验证码
                     String sessionCode = (String) request.getSession().getAttribute(SpringSecurityDemoController.SESSION_KEY);
                     //获取用户输入的验证码

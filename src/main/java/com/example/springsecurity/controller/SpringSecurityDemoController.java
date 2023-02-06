@@ -1,5 +1,6 @@
 package com.example.springsecurity.controller;
 
+import com.example.springsecurity.exception.ValidateCodeException;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +41,7 @@ public class SpringSecurityDemoController{
    * 跳转登录页面
    * @return
    */
-  @GetMapping("/showLogin")
+  @RequestMapping ("/showLogin")
     public String showLogin(){
       return "login";
   }

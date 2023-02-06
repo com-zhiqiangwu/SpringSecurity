@@ -1,6 +1,7 @@
 package com.example.springsecurity.config;
 
 import com.example.springsecurity.exception.MyAccessDeniedHandler;
+import com.example.springsecurity.filter.ImageCodeValidaterFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        ImageCodeValidaterFilter imageCodeValidaterFilter = new ImageCodeValidaterFilter();
         //配置登录页面，注意请求，要和controller中一致
         http.formLogin()
                 //只要你没认证的情况下，请求服务器当前应用程序的端口，都会到这个页面；
@@ -73,11 +76,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("un")
                 .passwordParameter("pwd");
 
-           //配置权限
+
+            //添加图形验证码到filter之前
+            http.addFilterBefore(imageCodeValidaterFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        //配置权限
            http.authorizeRequests()
                    //只要请求showLogin页面，就全部放行
                    //antMatchers,表示指定一个页面，permitAll表示不需要授权，全部放行
-                   .antMatchers("/showLogin","/loginFail","/code/image").permitAll()
+                   .antMatchers("/showLogin","/loginFail","/code/image", "/css/**","/js/**","/images/**","/layui/**").permitAll()
                    //给访问路径设置权限。如/loginSuccess设置为具有admin1权限才能访问
                    .antMatchers("/loginSuccess").hasAuthority("admin1")
                    //拒绝访问abc的一切请求
